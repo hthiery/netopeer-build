@@ -44,7 +44,9 @@ echo "############################################################"
 echo "#### build libyang .. $(pwd)"
 mkdir -p build
 pushd build
-checked cmake -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+checked cmake \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+    -DCMAKE_BUILD_TYPE:String=Release \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
     ..
@@ -58,10 +60,12 @@ echo "############################################################"
 echo "#### build libnetconf2 .. $(pwd)"
 mkdir -p build
 pushd build
-checked cmake -DENABLE_VALGRIND_TESTS:BOOL=OFF \
+checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-    -DENABLE_TLS:BOOL=ON -DENABLE_SSH:BOOL=ON \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
     -DCMAKE_BUILD_TYPE:String=Release \
+    -DENABLE_VALGRIND_TESTS:BOOL=OFF \
+    -DENABLE_TLS:BOOL=ON -DENABLE_SSH:BOOL=ON \
     ..
 checked make
 checked make install
@@ -74,18 +78,20 @@ echo "############################################################"
 echo "#### build sysrepo .. $(pwd)"
 mkdir -p build
 pushd build
-checked cmake -DENABLE_TESTS:BOOL=OFF \
+checked cmake \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_EXAMPLES:BOOL=OFF \
     -DBUILD_CPP_EXAMPLES:BOOL=OFF \
-    -DCMAKE_BUILD_TYPE=Release \
+    -DENABLE_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
     -DENABLE_NACM:BOOL=ON \
     -DNACM_RECOVERY_UID:INTEGER=0 \
     -DREPOSITORY_LOC:PATH=${ROOTFS}/usr/etc/sysrepo \
-    -DSUBSCRIPTIONS_SOCKET_DIR:PATH=${ROOTFS}/usr/var/run/sysrep-subscriptions \
-    -DDAEMON_PID_FILE:PATH=${ROOTFS}/usr//var/run/sysrepod.pid \
-    -DDAEMON_SOCKET:PATH=${ROOTFS}/usr/var/run/sysrepod.sock \
+    -DSUBSCRIPTIONS_SOCKET_DIR:PATH=${ROOTFS}/var/run/sysrep-subscriptions \
+    -DDAEMON_PID_FILE:PATH=${ROOTFS}/var/run/sysrepod.pid \
+    -DDAEMON_SOCKET:PATH=${ROOTFS}/var/run/sysrepod.sock \
     ..
 checked make
 checked make install
@@ -100,9 +106,12 @@ mkdir -p build-keystored
 pushd build-keystored
 echo "############################################################"
 echo "#### build keystored .. $(pwd)"
-checked cmake -DSYSREPO_LIBRARY:PATH=${ROOTFS}/usr/lib/libsysrepo.so \
-    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/usr/include \
+checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/usr/include \
+    -DSYSREPO_LIBRARY:PATH=${ROOTFS}/usr/lib/libsysrepo.so \
     ../keystored
 checked make
 checked make install
@@ -113,35 +122,38 @@ mkdir -p build-server
 pushd build-server
 echo "############################################################"
 echo "#### build server .. $(pwd)"
-checked cmake  -DLIBNETCONF2_LIBRARY=${ROOTFS}/usr/lib/libnetconf2.so \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
-    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/usr/include/ \
+checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DLIBNETCONF2_LIBRARY=${ROOTFS}/usr/lib/libnetconf2.so \
+    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/usr/include/ \
     -DENABLE_BUILD_TESTS:BOOL=OFF \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/usr/include/ \
     -DLIBYANG_LIBRARY:PATH=${ROOTFS}/usr/lib/libyang.so \
+    -DPIDFILE_PREFIX:PATH=${ROOTFS}/var/run \
     ../server
 checked make
 checked make install
 popd # build-server
 
-#mkdir -p build-server
-#pushd build-server
-#echo "############################################################"
-#echo "#### build server .. $(pwd)"
-#checked cmake  -DLIBNETCONF2_LIBRARY=${ROOTFS}/usr/lib/libnetconf2.so \
-#    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
-#    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/usr/include/ \
-#    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-#    -DENABLE_BUILD_TESTS:BOOL=OFF \
-#    -DENABLE_VALGRIND_TESTS:BOOL=OFF \
-#    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/usr/include/ \
-#    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/usr/lib/libyang.so \
-#    ../server
-#checked make
-#checked make install
-#popd # build-server
+mkdir -p build-cli
+pushd build-cli
+echo "############################################################"
+echo "#### build cli .. $(pwd)"
+checked cmake \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DLIBNETCONF2_LIBRARY=${ROOTFS}/usr/lib/libnetconf2.so \
+    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/usr/include/ \
+    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/usr/include/ \
+    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/usr/lib/libyang.so \
+    ../cli
+checked make
+checked make install
+popd # build-cli
 
 popd # notopeer
 

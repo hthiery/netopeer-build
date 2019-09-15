@@ -1,6 +1,6 @@
 export ROOTFS=$(pwd)/rootfs
-export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${ROOTFS}/usr/lib/pkgconfig
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${ROOTFS}/usr/lib/
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${ROOTFS}/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${ROOTFS}/lib
 
 checked () {
     CMD=$*
@@ -52,7 +52,7 @@ echo "#### build libyang .. $(pwd)"
 mkdir -p build-libyang
 pushd build-libyang
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
     -DCMAKE_BUILD_TYPE:String=Release \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
@@ -67,8 +67,8 @@ echo "#### build libnetconf2 .. $(pwd)"
 mkdir -p build-libnetconf2
 pushd build-libnetconf2
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DCMAKE_BUILD_TYPE:String=Release \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DENABLE_TLS:BOOL=ON -DENABLE_SSH:BOOL=ON \
@@ -83,8 +83,8 @@ echo "#### build sysrepo .. $(pwd)"
 mkdir -p build-sysrepo
 pushd build-sysrepo
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_EXAMPLES:BOOL=OFF \
     -DBUILD_CPP_EXAMPLES:BOOL=OFF \
@@ -92,7 +92,7 @@ checked cmake \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
     -DENABLE_NACM:BOOL=ON \
     -DNACM_RECOVERY_UID:INTEGER=0 \
-    -DREPOSITORY_LOC:PATH=${ROOTFS}/usr/etc/sysrepo \
+    -DREPOSITORY_LOC:PATH=${ROOTFS}/etc/sysrepo \
     -DSUBSCRIPTIONS_SOCKET_DIR:PATH=${ROOTFS}/var/run/sysrep-subscriptions \
     -DDAEMON_PID_FILE:PATH=${ROOTFS}/var/run/sysrepod.pid \
     -DDAEMON_SOCKET:PATH=${ROOTFS}/var/run/sysrepod.sock \
@@ -109,11 +109,11 @@ pushd build-keystored
 echo "############################################################"
 echo "#### build keystored .. $(pwd)"
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DCMAKE_BUILD_TYPE=Release \
-    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/usr/include \
-    -DSYSREPO_LIBRARY:PATH=${ROOTFS}/usr/lib/libsysrepo.so \
+    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/include \
+    -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
     ../../sources/Netopeer2/keystored
 checked make
 checked make install
@@ -125,15 +125,15 @@ echo "#### build server .. $(pwd)"
 mkdir -p build-server
 pushd build-server
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DCMAKE_BUILD_TYPE=Release \
-    -DLIBNETCONF2_LIBRARY=${ROOTFS}/usr/lib/libnetconf2.so \
-    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/usr/include/ \
+    -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
+    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
     -DENABLE_BUILD_TESTS:BOOL=OFF \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
-    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/usr/include/ \
-    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/usr/lib/libyang.so \
+    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \
+    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/lib/libyang.so \
     -DPIDFILE_PREFIX:PATH=${ROOTFS}/var/run \
     ../../sources/Netopeer2/server
 checked make
@@ -145,13 +145,13 @@ echo "#### build cli .. $(pwd)"
 mkdir -p build-cli
 pushd build-cli
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS}/usr \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/usr/lib \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DCMAKE_BUILD_TYPE=Release \
-    -DLIBNETCONF2_LIBRARY=${ROOTFS}/usr/lib/libnetconf2.so \
-    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/usr/include/ \
-    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/usr/include/ \
-    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/usr/lib/libyang.so \
+    -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
+    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
+    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \
+    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/lib/libyang.so \
     ../../sources/Netopeer2/cli
 checked make
 checked make install

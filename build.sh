@@ -53,7 +53,6 @@ mkdir -p build-libyang
 pushd build-libyang
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
-    -DCMAKE_BUILD_TYPE:String=Release \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
     ../../sources/libyang
@@ -69,7 +68,6 @@ pushd build-libnetconf2
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DCMAKE_BUILD_TYPE:String=Release \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DENABLE_TLS:BOOL=ON -DENABLE_SSH:BOOL=ON \
     ../../sources/libnetconf2
@@ -85,7 +83,6 @@ pushd build-sysrepo
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_EXAMPLES:BOOL=OFF \
     -DBUILD_CPP_EXAMPLES:BOOL=OFF \
     -DENABLE_TESTS:BOOL=OFF \
@@ -111,7 +108,6 @@ echo "#### build keystored .. $(pwd)"
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DCMAKE_BUILD_TYPE=Release \
     -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/include \
     -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
     ../../sources/Netopeer2/keystored
@@ -127,7 +123,6 @@ pushd build-server
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DCMAKE_BUILD_TYPE=Release \
     -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
     -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
     -DENABLE_BUILD_TESTS:BOOL=OFF \
@@ -147,7 +142,6 @@ pushd build-cli
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DCMAKE_BUILD_TYPE=Release \
     -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
     -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
     -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \

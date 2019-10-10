@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export ROOTFS=$(pwd)/rootfs
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${ROOTFS}/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${ROOTFS}/lib
@@ -17,28 +19,28 @@ pushd sources
 if [ ! -d "libyang" ]; then
     git clone https://github.com/CESNET/libyang.git
     pushd libyang
-    checked git checkout v1.0-r3 -b v1.0-r3
+    checked git checkout v1.0-r3
     popd
 fi
 
 if [ ! -d "sysrepo" ]; then
     git clone https://github.com/sysrepo/sysrepo.git
     pushd sysrepo
-    checked git checkout  v0.7.8 -b v0.7.8
+    checked git checkout v0.7.8
     popd
 fi
 
 if [ ! -d "libnetconf2" ]; then
     git clone https://github.com/CESNET/libnetconf2.git
     pushd libnetconf2
-    checked git checkout  v0.12-r2 -b v0.12-r2
+    checked git checkout v0.12-r2
     popd
 fi
 
 if [ ! -d "Netopeer2" ]; then
     git clone https://github.com/CESNET/Netopeer2.git
     pushd Netopeer2
-    checked git checkout  v0.7-r2 -b v0.7-r2
+    checked git checkout v0.7-r2
     popd
 fi
 

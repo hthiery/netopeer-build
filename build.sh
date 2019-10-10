@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export ROOTFS=$(pwd)/rootfs
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${ROOTFS}/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${ROOTFS}/lib

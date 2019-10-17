@@ -23,6 +23,12 @@ if [ ! -d "libyang" ]; then
     popd
 fi
 
+if [ ! -d "libredblack" ]; then
+    git clone https://github.com/sysrepo/libredblack.git
+    pushd libredblack
+    popd
+fi
+
 if [ ! -d "sysrepo" ]; then
     git clone https://github.com/sysrepo/sysrepo.git
     pushd sysrepo
@@ -44,6 +50,16 @@ if [ ! -d "Netopeer2" ]; then
     popd
 fi
 
+echo "############################################################"
+echo "#### build libredblack .. $(pwd)"
+pushd  libredblack
+checked ./configure --prefix=${ROOTFS}
+checked make
+checked make install
+popd # libredblack
+
+echo "############################################################"
+
 popd # sources
 
 mkdir -p build
@@ -55,6 +71,7 @@ mkdir -p build-libyang
 pushd build-libyang
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
     ../../sources/libyang
@@ -69,6 +86,7 @@ mkdir -p build-libnetconf2
 pushd build-libnetconf2
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DENABLE_TLS:BOOL=ON -DENABLE_SSH:BOOL=ON \
@@ -78,12 +96,15 @@ checked make install
 popd
 
 
+#    -DREDBLACK_INCLUDE_DIR=${ROOTFS}/usr/local/include \
+#    -DREDBLACK_LIBRARY=${ROOTFS}/usr/local/lib/libredblack.so \
 echo "############################################################"
 echo "#### build sysrepo .. $(pwd)"
 mkdir -p build-sysrepo
 pushd build-sysrepo
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DBUILD_EXAMPLES:BOOL=OFF \
     -DBUILD_CPP_EXAMPLES:BOOL=OFF \
@@ -109,9 +130,13 @@ echo "############################################################"
 echo "#### build keystored .. $(pwd)"
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/include \
     -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
+    -DSR_PLUGINS_DIR=${ROOTFS}/lib64/sysrepo/plugins \
+    -DKEYSTORED_KEYS_DIR=${ROOTFS}/etc/keystored/keys \
+    -DSSH_KEY_INSTALL=OFF \
     ../../sources/Netopeer2/keystored
 checked make
 checked make install
@@ -124,9 +149,12 @@ mkdir -p build-server
 pushd build-server
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
     -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
     -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
     -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
+    -DREDBLACK_INCLUDE_DIR=${ROOTFS}/usr/local/include \
+    -DREDBLACK_LIBRARY=${ROOTFS}/usr/local/lib/libredblack.so \
     -DENABLE_BUILD_TESTS:BOOL=OFF \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \
@@ -143,7 +171,7 @@ mkdir -p build-cli
 pushd build-cli
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
+    -DCMAKE_INSTALL_LIBDIR=lib \
     -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
     -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
     -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \
@@ -154,3 +182,8 @@ checked make install
 popd # build-cli
 
 popd # build
+
+
+echo "############################################################"
+echo "#### SUCCESS"
+echo "############################################################"

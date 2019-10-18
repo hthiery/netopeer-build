@@ -136,7 +136,7 @@ checked cmake \
     -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
     -DSR_PLUGINS_DIR=${ROOTFS}/lib64/sysrepo/plugins \
     -DKEYSTORED_KEYS_DIR=${ROOTFS}/etc/keystored/keys \
-    -DSSH_KEY_INSTALL=OFF \
+    -DSSH_KEY_INSTALL=ON \
     ../../sources/Netopeer2/keystored
 checked make
 checked make install

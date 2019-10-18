@@ -50,6 +50,10 @@ if [ ! -d "Netopeer2" ]; then
     popd
 fi
 
+if [ ! -d "sysrepo-plugin-module-versions" ]; then
+    git clone https://github.com/kontron/sysrepo-plugin-module-versions.git
+fi
+
 echo "############################################################"
 echo "#### build libredblack .. $(pwd)"
 pushd  libredblack
@@ -181,8 +185,23 @@ checked make
 checked make install
 popd # build-cli
 
-popd # build
+echo "############################################################"
+echo "#### build build-sysrepo-plugin-module-versions .. $(pwd)"
+mkdir -p build-sysrepo-plugin-module-versions
+pushd build-sysrepo-plugin-module-versions
+checked cmake \
+    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
+    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/include \
+    -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
+    -DSR_PLUGINS_DIR=${ROOTFS}/lib64/sysrepo/plugins \
+    ../../sources/sysrepo-plugin-module-versions
+checked make
+checked make install
+popd # build-cli
 
+popd # build
 
 echo "############################################################"
 echo "#### SUCCESS"

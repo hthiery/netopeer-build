@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export ROOTFS=$(pwd)/rootfs
-export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${ROOTFS}/lib/pkgconfig
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${ROOTFS}/lib
+export SYSROOT=$(pwd)/sysroot
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${SYSROOT}/lib/pkgconfig
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${SYSROOT}/lib
 
 checked () {
     CMD=$*
@@ -57,7 +57,7 @@ fi
 echo "############################################################"
 echo "#### build libredblack .. $(pwd)"
 pushd  libredblack
-checked ./configure --prefix=${ROOTFS}
+checked ./configure --prefix=${SYSROOT}
 checked make
 checked make install
 popd # libredblack
@@ -74,7 +74,7 @@ echo "#### build libyang .. $(pwd)"
 mkdir -p build-libyang
 pushd build-libyang
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
@@ -89,9 +89,9 @@ echo "#### build libnetconf2 .. $(pwd)"
 mkdir -p build-libnetconf2
 pushd build-libnetconf2
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
+    -DCMAKE_LIBRARY_PATH:PATH=${SYSROOT}/lib \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
     -DENABLE_TLS:BOOL=ON -DENABLE_SSH:BOOL=ON \
     ../../sources/libnetconf2
@@ -100,26 +100,26 @@ checked make install
 popd
 
 
-#    -DREDBLACK_INCLUDE_DIR=${ROOTFS}/usr/local/include \
-#    -DREDBLACK_LIBRARY=${ROOTFS}/usr/local/lib/libredblack.so \
+#    -DREDBLACK_INCLUDE_DIR=${SYSROOT}/usr/local/include \
+#    -DREDBLACK_LIBRARY=${SYSROOT}/usr/local/lib/libredblack.so \
 echo "############################################################"
 echo "#### build sysrepo .. $(pwd)"
 mkdir -p build-sysrepo
 pushd build-sysrepo
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
+    -DCMAKE_LIBRARY_PATH:PATH=${SYSROOT}/lib \
     -DBUILD_EXAMPLES:BOOL=OFF \
     -DBUILD_CPP_EXAMPLES:BOOL=OFF \
     -DENABLE_TESTS:BOOL=OFF \
     -DGEN_PYTHON_BINDINGS:BOOL=OFF \
     -DENABLE_NACM:BOOL=ON \
     -DNACM_RECOVERY_UID:INTEGER=0 \
-    -DREPOSITORY_LOC:PATH=${ROOTFS}/etc/sysrepo \
-    -DSUBSCRIPTIONS_SOCKET_DIR:PATH=${ROOTFS}/var/run/sysrep-subscriptions \
-    -DDAEMON_PID_FILE:PATH=${ROOTFS}/var/run/sysrepod.pid \
-    -DDAEMON_SOCKET:PATH=${ROOTFS}/var/run/sysrepod.sock \
+    -DREPOSITORY_LOC:PATH=${SYSROOT}/etc/sysrepo \
+    -DSUBSCRIPTIONS_SOCKET_DIR:PATH=${SYSROOT}/var/run/sysrep-subscriptions \
+    -DDAEMON_PID_FILE:PATH=${SYSROOT}/var/run/sysrepod.pid \
+    -DDAEMON_SOCKET:PATH=${SYSROOT}/var/run/sysrepod.sock \
     ../../sources/sysrepo
 checked make
 checked make install
@@ -133,12 +133,12 @@ pushd build-keystored
 echo "############################################################"
 echo "#### build keystored .. $(pwd)"
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/include \
-    -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
-    -DKEYSTORED_KEYS_DIR=${ROOTFS}/etc/keystored/keys \
+    -DCMAKE_LIBRARY_PATH:PATH=${SYSROOT}/lib \
+    -DSYSREPO_INCLUDE_DIR:PATH=${SYSROOT}/include \
+    -DSYSREPO_LIBRARY:PATH=${SYSROOT}/lib/libsysrepo.so \
+    -DKEYSTORED_KEYS_DIR=${SYSROOT}/etc/keystored/keys \
     -DSSH_KEY_INSTALL=ON \
     ../../sources/Netopeer2/keystored
 checked make
@@ -151,18 +151,18 @@ echo "#### build server .. $(pwd)"
 mkdir -p build-server
 pushd build-server
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
-    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
-    -DREDBLACK_INCLUDE_DIR=${ROOTFS}/usr/local/include \
-    -DREDBLACK_LIBRARY=${ROOTFS}/usr/local/lib/libredblack.so \
+    -DCMAKE_LIBRARY_PATH:PATH=${SYSROOT}/lib \
+    -DLIBNETCONF2_LIBRARY=${SYSROOT}/lib/libnetconf2.so \
+    -DLIBNETCONF2_INCLUDE_DIR=${SYSROOT}/include \
+    -DREDBLACK_INCLUDE_DIR=${SYSROOT}/usr/local/include \
+    -DREDBLACK_LIBRARY=${SYSROOT}/usr/local/lib/libredblack.so \
     -DENABLE_BUILD_TESTS:BOOL=OFF \
     -DENABLE_VALGRIND_TESTS:BOOL=OFF \
-    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \
-    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/lib/libyang.so \
-    -DPIDFILE_PREFIX:PATH=${ROOTFS}/var/run \
+    -DLIBYANG_INCLUDE_DIR:PATH=${SYSROOT}/include \
+    -DLIBYANG_LIBRARY:PATH=${SYSROOT}/lib/libyang.so \
+    -DPIDFILE_PREFIX:PATH=${SYSROOT}/var/run \
     ../../sources/Netopeer2/server
 checked make
 checked make install
@@ -173,12 +173,12 @@ echo "#### build cli .. $(pwd)"
 mkdir -p build-cli
 pushd build-cli
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DLIBNETCONF2_LIBRARY=${ROOTFS}/lib/libnetconf2.so \
-    -DLIBNETCONF2_INCLUDE_DIR=${ROOTFS}/include \
-    -DLIBYANG_INCLUDE_DIR:PATH=${ROOTFS}/include \
-    -DLIBYANG_LIBRARY:PATH=${ROOTFS}/lib/libyang.so \
+    -DLIBNETCONF2_LIBRARY=${SYSROOT}/lib/libnetconf2.so \
+    -DLIBNETCONF2_INCLUDE_DIR=${SYSROOT}/include \
+    -DLIBYANG_INCLUDE_DIR:PATH=${SYSROOT}/include \
+    -DLIBYANG_LIBRARY:PATH=${SYSROOT}/lib/libyang.so \
     ../../sources/Netopeer2/cli
 checked make
 checked make install
@@ -189,11 +189,11 @@ echo "#### build build-sysrepo-plugin-module-versions .. $(pwd)"
 mkdir -p build-sysrepo-plugin-module-versions
 pushd build-sysrepo-plugin-module-versions
 checked cmake \
-    -DCMAKE_INSTALL_PREFIX:PATH=${ROOTFS} \
+    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
-    -DCMAKE_LIBRARY_PATH:PATH=${ROOTFS}/lib \
-    -DSYSREPO_INCLUDE_DIR:PATH=${ROOTFS}/include \
-    -DSYSREPO_LIBRARY:PATH=${ROOTFS}/lib/libsysrepo.so \
+    -DCMAKE_LIBRARY_PATH:PATH=${SYSROOT}/lib \
+    -DSYSREPO_INCLUDE_DIR:PATH=${SYSROOT}/include \
+    -DSYSREPO_LIBRARY:PATH=${SYSROOT}/lib/libsysrepo.so \
     ../../sources/sysrepo-plugin-module-versions
 checked make
 checked make install

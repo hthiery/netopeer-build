@@ -4,6 +4,8 @@ export SYSROOT=$(pwd)/sysroot
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${SYSROOT}/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${SYSROOT}/lib
 
+export SYSREPOCFG=${SYSROOT}/bin/sysrepocfg
+
 checked () {
     CMD=$*
     $CMD
@@ -200,6 +202,15 @@ checked make install
 popd # sysrepo-plugin-module-versions
 
 popd # build
+
+
+echo "############################################################"
+echo "#### Server configuration"
+echo "############################################################"
+checked ${SYSREPOCFG} -d startup -m sources/Netopeer2/server/configuration/load_server_certs.xml ietf-keystore
+checked ${SYSREPOCFG} -d startup -m sources/Netopeer2/server/configuration/tls_listen.xml ietf-netconf-server
+checked cp sources/Netopeer2/server/configuration/tls/server.key ${SYSROOT}/etc/keystored/keys/test_server_key.pem
+checked chmod 600 ${SYSROOT}/etc/keystored/keys/test_server_key.pem
 
 echo "############################################################"
 echo "#### SUCCESS"

@@ -71,8 +71,8 @@ pushd build
 
 echo "############################################################"
 echo "#### build libyang .. $(pwd)"
-mkdir -p build-libyang
-pushd build-libyang
+mkdir -p libyang
+pushd libyang
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
@@ -86,8 +86,8 @@ popd # libyang
 
 echo "############################################################"
 echo "#### build libnetconf2 .. $(pwd)"
-mkdir -p build-libnetconf2
-pushd build-libnetconf2
+mkdir -p libnetconf2
+pushd libnetconf2
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
@@ -97,15 +97,15 @@ checked cmake \
     ../../sources/libnetconf2
 checked make
 checked make install
-popd
+popd # libnetconf2
 
 
 #    -DREDBLACK_INCLUDE_DIR=${SYSROOT}/usr/local/include \
 #    -DREDBLACK_LIBRARY=${SYSROOT}/usr/local/lib/libredblack.so \
 echo "############################################################"
 echo "#### build sysrepo .. $(pwd)"
-mkdir -p build-sysrepo
-pushd build-sysrepo
+mkdir -p sysrepo
+pushd sysrepo
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
@@ -123,13 +123,13 @@ checked cmake \
     ../../sources/sysrepo
 checked make
 checked make install
-popd
+popd # sysrepo
 
 
 echo "############################################################"
 echo "#### Netopeer2 .. $(pwd)"
-mkdir -p build-keystored
-pushd build-keystored
+mkdir -p keystored
+pushd keystored
 echo "############################################################"
 echo "#### build keystored .. $(pwd)"
 checked cmake \
@@ -143,13 +143,13 @@ checked cmake \
     ../../sources/Netopeer2/keystored
 checked make
 checked make install
-popd # build-keystored
+popd # keystored
 
 
 echo "############################################################"
 echo "#### build server .. $(pwd)"
-mkdir -p build-server
-pushd build-server
+mkdir -p server
+pushd server
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
@@ -166,12 +166,12 @@ checked cmake \
     ../../sources/Netopeer2/server
 checked make
 checked make install
-popd
+popd # server
 
 echo "############################################################"
 echo "#### build cli .. $(pwd)"
-mkdir -p build-cli
-pushd build-cli
+mkdir -p cli
+pushd cli
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
@@ -182,12 +182,12 @@ checked cmake \
     ../../sources/Netopeer2/cli
 checked make
 checked make install
-popd # build-cli
+popd # cli
 
 echo "############################################################"
-echo "#### build build-sysrepo-plugin-module-versions .. $(pwd)"
-mkdir -p build-sysrepo-plugin-module-versions
-pushd build-sysrepo-plugin-module-versions
+echo "#### build sysrepo-plugin-module-versions .. $(pwd)"
+mkdir -p sysrepo-plugin-module-versions
+pushd sysrepo-plugin-module-versions
 checked cmake \
     -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
     -DCMAKE_INSTALL_LIBDIR=lib \
@@ -197,7 +197,7 @@ checked cmake \
     ../../sources/sysrepo-plugin-module-versions
 checked make
 checked make install
-popd # build-cli
+popd # sysrepo-plugin-module-versions
 
 popd # build
 

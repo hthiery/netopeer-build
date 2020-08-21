@@ -21,48 +21,34 @@ pushd sources
 if [ ! -d "libyang" ]; then
     git clone https://github.com/CESNET/libyang.git
     pushd libyang
-    checked git checkout v1.0.109
-    popd
-fi
-
-if [ ! -d "libredblack" ]; then
-    git clone https://github.com/sysrepo/libredblack.git
-    pushd libredblack
+    checked git checkout v1.0.176
     popd
 fi
 
 if [ ! -d "sysrepo" ]; then
     git clone https://github.com/sysrepo/sysrepo.git
     pushd sysrepo
-    checked git checkout v1.3.21
+    checked git checkout v1.4.66
     popd
 fi
 
 if [ ! -d "libnetconf2" ]; then
     git clone https://github.com/CESNET/libnetconf2.git
     pushd libnetconf2
-    checked git checkout v1.1.3
+    checked git checkout v1.1.26
     popd
 fi
 
 if [ ! -d "Netopeer2" ]; then
     git clone https://github.com/CESNET/Netopeer2.git
     pushd Netopeer2
-    checked git checkout v1.1.1
+    checked git checkout v1.1.34
     popd
 fi
 
-if [ ! -d "sysrepo-plugin-module-versions" ]; then
-    git clone https://github.com/kontron/sysrepo-plugin-module-versions.git
-fi
-
-echo "############################################################"
-echo "#### build libredblack .. $(pwd)"
-pushd  libredblack
-checked ./configure --prefix=${SYSROOT}
-checked make
-checked make install
-popd # libredblack
+#if [ ! -d "sysrepo-plugin-module-versions" ]; then
+#    git clone https://github.com/kontron/sysrepo-plugin-module-versions.git
+#fi
 
 echo "############################################################"
 
@@ -92,7 +78,8 @@ pushd libnetconf2
 checked cmake \
     -DCMAKE_INSTALL_PREFIX=${SYSROOT} \
     -DENABLE_VALGRIND_TESTS=OFF \
-    -DENABLE_TLS=ON -DENABLE_SSH=ON \
+    -DENABLE_TLS=ON \
+	-DENABLE_SSH=ON \
     ../../sources/libnetconf2
 checked make
 checked make install
@@ -119,54 +106,25 @@ checked cmake \
     -DDAEMON_SOCKET=${SYSROOT}/var/run/sysrepod.sock \
     ../../sources/sysrepo
 checked make
+checked make doc
 checked make install
 popd # sysrepo
 
 
-#echo "############################################################"
-#echo "#### Netopeer2 .. $(pwd)"
-#mkdir -p keystored
-#pushd keystored
-#echo "############################################################"
-#echo "#### build keystored .. $(pwd)"
-#checked cmake \
-#    -DCMAKE_INSTALL_PREFIX:PATH=${SYSROOT} \
-#    -DCMAKE_INSTALL_LIBDIR=lib \
-#    -DCMAKE_LIBRARY_PATH:PATH=${SYSROOT}/lib \
-#    -DSYSREPO_INCLUDE_DIR:PATH=${SYSROOT}/include \
-#    -DSYSREPO_LIBRARY:PATH=${SYSROOT}/lib/libsysrepo.so \
-#    -DKEYSTORED_KEYS_DIR=${SYSROOT}/etc/keystored/keys \
-#    -DSSH_KEY_INSTALL=ON \
-#    ../../sources/Netopeer2/keystored
-#checked make
-#checked make install
-#popd # keystored
-
-
 echo "############################################################"
 echo "#### build netopeer2-server .. $(pwd)"
-mkdir -p server
-pushd server
+mkdir -p netopeer2
+pushd netopeer2
 checked cmake \
     -DCMAKE_INSTALL_PREFIX=${SYSROOT} \
     -DENABLE_BUILD_TESTS=OFF \
     -DENABLE_VALGRIND_TESTS=OFF \
+    -DBUILD_CLI=ON \
     -DPIDFILE_PREFIX=${SYSROOT}/var/run \
-    ../../sources/Netopeer2/server
+    ../../sources/Netopeer2
 checked make
 checked make install
-popd # server
-
-echo "############################################################"
-echo "#### build netopeer2-cli .. $(pwd)"
-mkdir -p cli
-pushd cli
-checked cmake \
-    -DCMAKE_INSTALL_PREFIX=${SYSROOT} \
-    ../../sources/Netopeer2/cli
-checked make
-checked make install
-popd # cli
+popd # netopeer2
 
 #echo "############################################################"
 #echo "#### build sysrepo-plugin-module-versions .. $(pwd)"

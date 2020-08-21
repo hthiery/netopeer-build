@@ -5,6 +5,7 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:${SYSROOT}/lib/pkgconfig
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/${SYSROOT}/lib
 
 export SYSREPOCFG=${SYSROOT}/bin/sysrepocfg
+export PATH=${SYSROOT}/bin/:$PATH
 
 checked () {
     CMD=$*

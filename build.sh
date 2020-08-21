@@ -68,6 +68,7 @@ checked cmake \
     -DGEN_PYTHON_BINDINGS=OFF \
     ../../sources/libyang
 checked make
+checked make doc
 checked make install
 popd # libyang
 
@@ -83,6 +84,7 @@ checked cmake \
 	-DENABLE_SSH=ON \
     ../../sources/libnetconf2
 checked make
+checked make doc
 checked make install
 popd # libnetconf2
 
@@ -107,7 +109,6 @@ checked cmake \
     -DDAEMON_SOCKET=${SYSROOT}/var/run/sysrepod.sock \
     ../../sources/sysrepo
 checked make
-checked make doc
 checked make install
 popd # sysrepo
 

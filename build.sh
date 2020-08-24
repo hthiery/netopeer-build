@@ -154,6 +154,9 @@ popd # build
 #checked cp sources/Netopeer2/server/configuration/tls/server.key ${SYSROOT}/etc/keystored/keys/test_server_key.pem
 #checked chmod 600 ${SYSROOT}/etc/keystored/keys/test_server_key.pem
 
+
+checked mkdir -p ${SYSROOT}/var/run
+
 echo "############################################################"
 echo "#### SUCCESS"
 echo "############################################################"

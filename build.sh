@@ -22,14 +22,14 @@ pushd sources
 if [ ! -d "libyang" ]; then
     git clone https://github.com/CESNET/libyang.git
     pushd libyang
-    checked git checkout v1.0.176
+    checked git checkout v1.0.184
     popd
 fi
 
 if [ ! -d "sysrepo" ]; then
     git clone https://github.com/sysrepo/sysrepo.git
     pushd sysrepo
-    checked git checkout v1.4.66
+    checked git checkout v1.4.70
     popd
 fi
 
@@ -43,7 +43,7 @@ fi
 if [ ! -d "Netopeer2" ]; then
     git clone https://github.com/CESNET/Netopeer2.git
     pushd Netopeer2
-    checked git checkout v1.1.34
+    checked git checkout v1.1.39
     popd
 fi
 

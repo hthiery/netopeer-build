@@ -109,6 +109,7 @@ checked cmake \
     -DDAEMON_SOCKET=${SYSROOT}/var/run/sysrepod.sock \
     ../../sources/sysrepo
 checked make
+checked make doc
 checked make install
 popd # sysrepo
 

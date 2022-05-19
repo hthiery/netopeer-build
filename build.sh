@@ -6,9 +6,9 @@ SYSREPO_VERSION="v2.1.64"
 LIBNETCONF2_VERSION="v2.1.11"
 NETOPEER2_VERSION="v2.1.23"
 
-SYSROOT=$(pwd)/sysroot
-PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig
-LD_LIBRARY_PATH=${SYSROOT}/lib
+export SYSROOT=$(pwd)/sysroot
+export PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig
+export LD_LIBRARY_PATH=${SYSROOT}/lib
 
 
 echo "SYSROOT=${SYSROOT}"

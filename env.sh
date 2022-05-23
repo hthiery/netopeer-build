@@ -1,4 +1,6 @@
-SYSROOT=$(pwd)/sysroot
+P=$(realpath ${BASH_SOURCE})
+P=$(dirname "${P}")
+SYSROOT=${P}/sysroot
 
 export PATH=${SYSROOT}/bin:${PATH}
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SYSROOT}/lib

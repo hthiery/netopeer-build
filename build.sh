@@ -5,6 +5,7 @@ LIBYANG_VERSION="v2.0.194"
 SYSREPO_VERSION="v2.1.64"
 LIBNETCONF2_VERSION="v2.1.11"
 NETOPEER2_VERSION="v2.1.23"
+LIBSSH_VERSION="libssh-0.8.9"
 
 export SYSROOT=$(pwd)/sysroot
 export PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig
@@ -17,6 +18,9 @@ echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 
 export SYSREPOCFG=${SYSROOT}/bin/sysrepocfg
 export PATH=${SYSROOT}/bin/:${PATH}
+
+CPUS=$(nproc)
+CPUS=1
 
 checked () {
     CMD=$*
@@ -58,6 +62,13 @@ if [ ! -d "Netopeer2" ]; then
     popd
 fi
 
+if [ ! -d "libssh" ]; then
+    git clone https://git.libssh.org/projects/libssh.git
+    pushd libssh
+    checked git checkout ${LIBSSH_VERSION}
+    popd
+fi
+
 #if [ ! -d "sysrepo-plugin-module-versions" ]; then
 #    git clone https://github.com/kontron/sysrepo-plugin-module-versions.git
 #fi
@@ -87,7 +98,7 @@ checked cmake \
     -DENABLE_VALGRIND_TESTS=OFF \
 	-DENABLE_TESTS=OFF \
     ../../sources/libyang
-checked make
+checked make -j${CPUS}
 #checked make doc
 checked make install
 popd # libyang
@@ -112,10 +123,27 @@ checked cmake \
     -DDAEMON_SOCKET=${SYSROOT}/var/run/sysrepod.sock \
 	-DENABLE_TESTS=OFF \
     ../../sources/sysrepo
-checked make
+checked make -j${CPUS}
 #checked make doc
 checked make install
 popd # sysrepo
+
+
+echo "############################################################"
+echo "#### build libssh .. $(pwd)"
+mkdir -p libssh
+pushd libssh
+
+
+checked cmake \
+	-DCMAKE_INCLUDE_PATH=${SYSROOT}/include \
+	-DCMAKE_LIBRARY_PATH=${SYSROOT}/lib \
+	-DCMAKE_INSTALL_PREFIX=${SYSROOT} \
+	../../sources/libssh
+checked make -j${CPUS}
+checked make install
+popd # libssh
+
 
 echo "############################################################"
 echo "#### build libnetconf2 .. $(pwd)"
@@ -124,21 +152,18 @@ pushd libnetconf2
 checked cmake \
 	-DCMAKE_INCLUDE_PATH=${SYSROOT}/include \
 	-DCMAKE_LIBRARY_PATH=${SYSROOT}/lib \
-    -DCMAKE_INSTALL_PREFIX=${SYSROOT} \
-    -DENABLE_VALGRIND_TESTS=OFF \
-    -DENABLE_TLS=ON \
+	-DLIBSSH_INCLUDE_DIR=${SYSROOT}/include \
+	-DLIBSSH_LIBRARY=${SYSROOT}/lib \
+	-DCMAKE_INSTALL_PREFIX=${SYSROOT} \
+	-DENABLE_VALGRIND_TESTS=OFF \
+	-DENABLE_TLS=ON \
 	-DENABLE_SSH=ON \
 	-DENABLE_TESTS=OFF \
     ../../sources/libnetconf2
-checked make
+checked make -j${CPUS}
 #checked make doc
 checked make install
 popd # libnetconf2
-
-
-#    -DREDBLACK_INCLUDE_DIR=${SYSROOT}/usr/local/include \
-#    -DREDBLACK_LIBRARY=${SYSROOT}/usr/local/lib/libredblack.so \
-
 
 
 echo "############################################################"
@@ -150,16 +175,16 @@ pushd netopeer2
 checked cmake \
 	-DCMAKE_INCLUDE_PATH=${SYSROOT}/include \
 	-DCMAKE_LIBRARY_PATH=${SYSROOT}/lib \
-    -DCMAKE_INSTALL_PREFIX=${SYSROOT} \
-    -DENABLE_BUILD_TESTS=OFF \
-    -DENABLE_VALGRIND_TESTS=OFF \
+	-DCMAKE_INSTALL_PREFIX=${SYSROOT} \
+	-DENABLE_BUILD_TESTS=OFF \
+	-DENABLE_VALGRIND_TESTS=OFF \
 	-DENABLE_TESTS=OFF \
-    -DBUILD_CLI=ON \
-    -DPIDFILE_PREFIX=${SYSROOT}/var/run \
-    ../../sources/Netopeer2
-checked make
+	-DBUILD_CLI=ON \
+	-DPIDFILE_PREFIX=${SYSROOT}/var/run \
+	../../sources/Netopeer2
+checked make -j${CPUS}
 checked make install
-rm -f /dev/shm/$(SHM_PREFIX)*
+rm -f /dev/shm/${SHM_PREFIX}*
 popd # netopeer2
 
 #echo "############################################################"
@@ -174,6 +199,7 @@ popd # netopeer2
 #    -DSYSREPO_LIBRARY=${SYSROOT}/lib/libsysrepo.so \
 #    ../../sources/sysrepo-plugin-module-versions
 #checked make
+#checked make -j${CPUS}
 #checked make install
 #popd # sysrepo-plugin-module-versions
 

@@ -1,7 +1,8 @@
 # Requirements
 
-## Debian 10
-tbd
+## Debian 10/11
+
+apt install cmake libpcre2-dev libssh-dev
 
 ## Fedora
 tbd
